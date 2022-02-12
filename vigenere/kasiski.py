@@ -1,6 +1,6 @@
-cryptotext = "ABAJFGABASJD"
+CRYPTOTEXT = "CHREEVOAHMAERATBIAXXWTNXBEEOPHBSBQMQEQERBWRVXUOAKXAOSXXWEAHBWGJMMQMNKGRFVGXWTRZXWIAKLXFPSKAUTEMNDCMGTSXMXBTUIADNGMGPSRELXNJELXVRVPRTULHDNQWTWDTYGBPHXTFALJHASVBFXNGLLCHRZBWELEKMSJIKNBHWRJGNMGJSGLXFEYPHAGNRBIEQJTAMRVLCRREMNDGLXRRIMGNSNRWCHRQHAEYEVTAQEBBIPEEWEVKAKOEWADREMXMTBHHCHRTKDNVRZCHRCLQOHPWQAIIWXNRMGWOIIFKEE"
 
- 
+
 # find equal substrings
 def find_equal_substrings(cryptotext):
     # create a list of all substrings
@@ -27,34 +27,59 @@ def find_equal_substrings(cryptotext):
 
 
 def get_indexes(repeated_substrings) -> dict:
+    # starting with 1
     repeated_substrings_indexes = {}
 
     for substring in repeated_substrings:
         indexes = []
-        for i in range(len(cryptotext)):
-            if cryptotext[i:i+len(substring)] == substring:
-                indexes.append(i)
+        for i in range(len(CRYPTOTEXT)):
+            if CRYPTOTEXT[i:i+len(substring)] == substring:
+                indexes.append(i + 1)
         repeated_substrings_indexes[substring] = indexes
         
     return repeated_substrings_indexes
 
 
-def main() -> None:
-    print("Ciphertext: ", cryptotext)
+def get_idexes_differences(indexes):
+    differences = []
+    for i in range(len(indexes) - 1):
+        differences.append(indexes[i+1] - indexes[i])
+    return differences
 
-    substrings_frequencies, repeated_substrings = find_equal_substrings(cryptotext)
+
+
+def gcd(a, b):
+    while b:
+        a, b = b, a % b
+    return a
+
+
+def main() -> None:
+    print("Ciphertext: {} \n".format(CRYPTOTEXT))
+
+    substrings_frequencies, repeated_substrings = find_equal_substrings(CRYPTOTEXT)
 
     for substring in repeated_substrings:
-        substring_length = len(substring)
         repeated_substrings_indexes = get_indexes(repeated_substrings)
 
-        # if all indexes divide by substring length without remainder
-        if all(i == 0 or i % substring_length == 0 for i in repeated_substrings_indexes[substring]):
-            print('\n')
-            print("Substring: ", substring)
-            print("Indexes: ", repeated_substrings_indexes[substring])
-            print("Key Length: ", substring_length)
-            print("Frequency: ", substrings_frequencies[substring])
+        indexes = repeated_substrings_indexes[substring]
+        differences = get_idexes_differences(indexes)
+        
+        if len(differences) > 1:
+            # find greatest common divisor of all differences
+            greatest_common_divisor = gcd(differences[0], differences[1])
+            for i in range(2, len(differences)):
+                greatest_common_divisor = gcd(greatest_common_divisor, differences[i])
+
+            if greatest_common_divisor > 1:
+                # if all indexes divide by substring length without remainder
+                print('\n')
+                print("Substring: ", substring)
+                print("Frequency: ", substrings_frequencies[substring])
+                print("Indexes: ", repeated_substrings_indexes[substring])
+                print("Differences: ", differences)
+                print("GCD (possible key length): ", greatest_common_divisor)
+
 
 if __name__ == "__main__":
     main()
