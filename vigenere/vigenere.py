@@ -1,4 +1,4 @@
-def process(message: str, key, type: str):
+def process(message: str, key: str, action: str) -> str:
      # convert the message to uppercase
     message = message.upper()
 
@@ -23,12 +23,14 @@ def process(message: str, key, type: str):
         # get the character value
         character_value = ord(character) - ord("A")
 
-        if type == "encrypt":
+        if action == "encrypt":
             # add the key value to the character value
             character_value += key_value
-        else :
+        elif action == "decrypt":
             # subtract the key value from the character value
             character_value -= key_value
+        else:
+            raise Exception("Invalid action")
 
         # convert the character value back to a character
         character = chr(character_value % 26 + ord("A"))
@@ -40,22 +42,15 @@ def process(message: str, key, type: str):
     return new_message
 
 
-def encrypt(message, key):
-    """
-    Encrypt the message using the key
-    """
-    return process(message, key, "encrypt")
+def encrypt(message: str, key: str) -> str:
+    return process(message, key, action="encrypt")
 
 
-def decrypt(message, key):
-    """
-    Decrypt the message using the key
-    """
-    return process(message, key, "decrypt")
+def decrypt(message: str, key: str) -> str:
+    return process(message, key, action="decrypt")
 
 
-def main():
-
+def main() -> None:
     # get the key
     key = input("Enter the key: ")
 
