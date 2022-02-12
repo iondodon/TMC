@@ -1,87 +1,60 @@
 cryptotext = "ABAJFGABASJD"
 
+ 
 # find equal substrings
 def find_equal_substrings(cryptotext):
     # create a list of all substrings
-    substrings = []
+    all_substrings = []
     for i in range(len(cryptotext)):
         for j in range(len(cryptotext)):
-            substrings.append(cryptotext[i:j])
+            all_substrings.append(cryptotext[i:j])
 
     # create a dictionary of substrings and their occurences
-    substring_dict = {}
-    for substring in substrings:
-        if substring in substring_dict:
-            substring_dict[substring] += 1
+    substring_occurancies = {}
+    for substring in all_substrings:
+        if substring in substring_occurancies:
+            substring_occurancies[substring] += 1
         else:
-            substring_dict[substring] = 1
+            substring_occurancies[substring] = 1
     
     # create a list of substrings that occur more than once
-    equal_substrings = []
-    for substring in substring_dict:
-        if substring_dict[substring] > 1:
-            equal_substrings.append(substring)
+    repeated_substrings = []
+    for substring in substring_occurancies:
+        if substring_occurancies[substring] > 1 and len(substring) > 1:
+            repeated_substrings.append(substring)
 
-    return (substring_dict, equal_substrings)
-
-
-def max_frequency_sustring(substring_dict):
-    max_frequency = 0
-    for substring in substring_dict:
-        if substring_dict[substring] > max_frequency:
-            max_frequency = substring_dict[substring]
-    return max_frequency
+    return (substring_occurancies, repeated_substrings)
 
 
-def get_longest_substring(equal_substrings):
-    longest_substring = ""
-    for substring in equal_substrings:
-        if len(substring) > len(longest_substring):
-            longest_substring = substring
+def get_indexes(repeated_substrings) -> dict:
+    repeated_substrings_indexes = {}
 
-    return longest_substring
-
-
-def get_indexes(equal_substrings):
-    substrings_indexes = {}
-    for substring in equal_substrings:
+    for substring in repeated_substrings:
         indexes = []
         for i in range(len(cryptotext)):
             if cryptotext[i:i+len(substring)] == substring:
                 indexes.append(i)
-        substrings_indexes[substring] = indexes
+        repeated_substrings_indexes[substring] = indexes
         
-    return substrings_indexes
+    return repeated_substrings_indexes
 
-def main():
-    print(cryptotext)
 
-    frequencies, equal_substrings = find_equal_substrings(cryptotext)
-    
-    # longest substring
-    longest_substring = get_longest_substring(equal_substrings)
+def main() -> None:
+    print("Ciphertext: ", cryptotext)
 
-    # frequency of longest substring
-    frequency_longest_substring = frequencies[longest_substring] 
+    substrings_frequencies, repeated_substrings = find_equal_substrings(cryptotext)
 
-    print("Longest substring:", longest_substring)
-    print("Frequency of longest substring:", frequency_longest_substring)
-
-    # indexes of longest substring
-    indexes = get_indexes(equal_substrings)
-    print("Indexes of longest substring:", indexes)
-
-    for substring in equal_substrings:
-        # substring length
+    for substring in repeated_substrings:
         substring_length = len(substring)
-        if substring_length == 0:
-            continue
+        repeated_substrings_indexes = get_indexes(repeated_substrings)
+
         # if all indexes divide by substring length without remainder
-        if all(i == 0 or i % substring_length == 0 for i in indexes[substring]):
+        if all(i == 0 or i % substring_length == 0 for i in repeated_substrings_indexes[substring]):
             print('\n')
-            print("Substring:", substring)
-            print("Indexes:", indexes[substring])
-            print("Key Length:", substring_length)
+            print("Substring: ", substring)
+            print("Indexes: ", repeated_substrings_indexes[substring])
+            print("Key Length: ", substring_length)
+            print("Frequency: ", substrings_frequencies[substring])
 
 if __name__ == "__main__":
     main()
